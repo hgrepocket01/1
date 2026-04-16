@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>MamangRaja Barber</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #0f0f1a;
+            color: #e0e0e0;
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid #d4a84333;
+        }
+        
+        .header h1 {
+            color: #d4a843;
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+        }
+        
+        .header p {
+            color: #888;
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+        
+        /* Status Bar */
+        .status-bar {
+            background: #1a1a2e;
+            border-radius: 12px;
+            padding: 10px 16px;
+            margin-bottom: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            border-left: 3px solid #d4a843;
+        }
+        
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            min-width: 70px;
+            background: #1a1a2e;
+            border: none;
+            color: #888;
+            padding: 12px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .tab-btn.active {
+            background: #d4a843;
+            color: #1a1a2e;
+        }
+        
+        /* Cards */
+        .card {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid #2a2a3e;
+        }
+        
+        .card-title {
+            color: #d4a843;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        /* Form */
+        .form-group {
+            margin-bottom: 14px;
+        }
+        
+        label {
+            display: block;
+            font-size: 0.75rem;
+            color: #aaa;
+            margin-bottom: 4px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            background: #0f0f1a;
+            border: 1px solid #2a2a3e;
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 0.9rem;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #d4a843;
+        }
+        
+        button {
+            background: #d4a843;
+            color: #1a1a2e;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+        }
+        
+        button.secondary {
+            background: #2a2a3e;
+            color: #d4a843;
+        }
+        
+        /* List Items */
+        .list-item {
+            background: #0f0f1a;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-left: 3px solid #d4a843;
+        }
+        
+        .list-item-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .list-item-sub {
+            font-size: 0.7rem;
+            color: #888;
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 16px;
+            right: 16px;
+            background: #d4a843;
+            color: #1a1a2e;
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: bold;
+            z-index: 1000;
+            animation: fadeInUp 0.3s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #d4a843;
+        }
+        
+        /* Responsive Grid */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        /* Hidden */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>💈 MAMANGRAJA</h1>
+        <p>Barber Shop Management</p>
+    </div>
+    
+    <div class="status-bar">
+        <span>📡 Status: <span id="status">Connecting...</span></span>
+        <span>👤 <span id="userRole">Admin</span></span>
+    </div>
+    
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="dashboard">📊 Dashboard</button>
+        <button class="tab-btn" data-tab="transactions">💳 Transaksi</button>
+        <button class="tab-btn" data-tab="queue">⏳ Antrian</button>
+        <button class="tab-btn" data-tab="customers">👥 Customer</button>
+        <button class="tab-btn" data-tab="barbers">✂️ Barber</button>
+        <button class="tab-btn" data-tab="stock">📦 Stock</button>
+    </div>
+    
+    <!-- Dashboard Tab -->
+    <div id="dashboard" class="tab-content">
+        <div class="card">
+            <div class="card-title">📈 Ringkasan Hari Ini</div>
+            <div id="dashboardStats">Loading...</div>
+        </div>
+        <div class="card">
+            <div class="card-title">⏳ Antrian Aktif</div>
+            <div id="activeQueue">Loading...</div>
+        </div>
+    </div>
+    
+    <!-- Transactions Tab -->
+    <div id="transactions" class="tab-content hidden">
+        <div class="card">
+            <div class="card-title">💰 Input Transaksi Baru</div>
+            <form id="transactionForm">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Nama Customer</label>
+                        <input type="text" id="custName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>No HP</label>
+                        <input type="tel" id="custPhone">
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Pilih Barber</label>
+                        <select id="barberSelect"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Operator</label>
+                        <input type="text" id="operator" value="admin">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Item/Layanan (pisah dengan koma)</label>
+                    <input type="text" id="items" placeholder="Potong Rambut, Keramas">
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Subtotal</label>
+                        <input type="number" id="sub" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Diskon (%)</label>
+                        <input type="number" id="disc" value="0">
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Total</label>
+                        <input type="number" id="total" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Bayar</label>
+                        <input type="number" id="pay">
+                    </div>
+                </div>
+                <button type="submit">💾 Simpan Transaksi</button>
+            </form>
+        </div>
+        <div class="card">
+            <div class="card-title">📜 Riwayat Transaksi</div>
+            <div id="transactionList">Loading...</div>
+        </div>
+    </div>
+    
+    <!-- Queue Tab -->
+    <div id="queue" class="tab-content hidden">
+        <div class="card">
+            <div class="card-title">➕ Tambah Antrian</div>
+            <form id="queueForm">
+                <div class="form-group">
+                    <label>Nama Customer</label>
+                    <input type="text" id="queueCustName" required>
+                </div>
+                <div class="form-group">
+                    <label>Layanan</label>
+                    <input type="text" id="queueService" required>
+                </div>
+                <div class="form-group">
+                    <label>Pilih Barber</label>
+                    <select id="queueBarber"></select>
+                </div>
+                <button type="submit">➕ Tambah ke Antrian</button>
+            </form>
+        </div>
+        <div class="card">
+            <div class="card-title">📋 Daftar Antrian</div>
+            <div id="queueList">Loading...</div>
+        </div>
+    </div>
+    
+    <!-- Customers Tab -->
+    <div id="customers" class="tab-content hidden">
+        <div class="card">
+            <div class="card-title">👥 Daftar Customer</div>
+            <input type="text" id="searchCustomer" placeholder="🔍 Cari nama/telepon..." style="margin-bottom: 12px;">
+            <div id="customerList">Loading...</div>
+        </div>
+    </div>
+    
+    <!-- Barbers Tab -->
+    <div id="barbers" class="tab-content hidden">
+        <div class="card">
+            <div class="card-title">✂️ Tambah Barber</div>
+            <form id="barberForm">
+                <div class="form-group">
+                    <label>Nama Barber</label>
+                    <input type="text" id="barberName" required>
+                </div>
+                <div class="form-group">
+                    <label>Spesialisasi</label>
+                    <input type="text" id="barberSpec" placeholder="Pria, Wanita, Anak">
+                </div>
+                <button type="submit">➕ Tambah Barber</button>
+            </form>
+        </div>
+        <div class="card">
+            <div class="card-title">📋 Daftar Barber</div>
+            <div id="barberList">Loading...</div>
+        </div>
+    </div>
+    
+    <!-- Stock Tab -->
+    <div id="stock" class="tab-content hidden">
+        <div class="card">
+            <div class="card-title">📦 Update Stock</div>
+            <form id="stockForm">
+                <div class="form-group">
+                    <label>Nama Produk</label>
+                    <input type="text" id="stockProduct" required>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Jenis</label>
+                        <select id="stockType">
+                            <option>Masuk</option>
+                            <option>Keluar</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Jumlah</label>
+                        <input type="number" id="stockQty" required>
+                    </div>
+                </div>
+                <button type="submit">💾 Update Stock</button>
+            </form>
+        </div>
+        <div class="card">
+            <div class="card-title">📦 Stok Saat Ini</div>
+            <div id="stockList">Loading...</div>
+        </div>
+    </div>
+    
+    <script>
+        // GANTI DENGAN URL DEPLOY ANDA
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwhmNCHTMihd39VEZ7N1Yg3Y64YvWjl0ItZjuzDsQ-Pz1XnuDDT_XBTOtXC1A7_2jL6/exec';
+        
+        let toastTimeout = null;
+        
+        function showToast(msg, isError = false) {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+            if (toastTimeout) clearTimeout(toastTimeout);
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.style.background = isError ? '#c62828' : '#d4a843';
+            toast.style.color = '#fff';
+            toast.innerText = msg;
+            document.body.appendChild(toast);
+            
+            toastTimeout = setTimeout(() => toast.remove(), 3000);
+        }
+        
+        async function callAPI(action, data = {}) {
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ action, ...data })
+                });
+                
+                // Karena mode no-cors, kita perlu pendekatan alternatif
+                // Gunakan JSONP style atau ubah deployment
+                const text = await response.text();
+                return JSON.parse(text);
+            } catch(e) {
+                // Fallback untuk CORS
+                return await callAPIWithJSONP(action, data);
+            }
+        }
+        
+        async function callAPIWithJSONP(action, data) {
+            return new Promise((resolve, reject) => {
+                const callback = 'callback_' + Date.now();
+                const params = new URLSearchParams({ action, ...data, callback });
+                const script = document.createElement('script');
+                
+                window[callback] = function(result) {
+                    delete window[callback];
+                    document.body.removeChild(script);
+                    resolve(result);
+                };
+                
+                script.src = `${SCRIPT_URL}?${params}`;
+                script.onerror = () => {
+                    delete window[callback];
+                    reject(new Error('Network error'));
+                };
+                document.body.appendChild(script);
+            });
+        }
+        
+        // Alternatif fetch dengan CORS (perlu deploy dengan CORS enabled)
+        async function fetchAPI(action, data = {}) {
+            const url = `${SCRIPT_URL}?action=${action}&${new URLSearchParams(data)}`;
+            const response = await fetch(url);
+            return response.json();
+        }
+        
+        // Load all data
+        async function loadDashboard() {
+            const queue = await fetchAPI('getQueue');
+            const transactions = await fetchAPI('getTransactions');
+            const today = new Date().toISOString().slice(0,10);
+            const todayTrans = transactions.data.filter(t => t.date === today);
+            
+            document.getElementById('dashboardStats').innerHTML = `
+                <div class="grid-2">
+                    <div class="list-item"><div class="list-item-title">💰 Transaksi Hari Ini</div><div>${todayTrans.length}</div></div>
+                    <div class="list-item"><div class="list-item-title">💵 Total Pendapatan</div><div>Rp ${todayTrans.reduce((a,b)=>a+(Number(b.total)||0),0).toLocaleString()}</div></div>
+                    <div class="list-item"><div class="list-item-title">⏳ Antrian Aktif</div><div>${queue.data.filter(q=>q.status!=='Selesai').length}</div></div>
+                    <div class="list-item"><div class="list-item-title">👥 Total Customer</div><div>${(await fetchAPI('getCustomers')).data.length}</div></div>
+                </div>
+            `;
+            
+            const activeQueue = queue.data.filter(q => q.status !== 'Selesai');
+            if(activeQueue.length === 0) {
+                document.getElementById('activeQueue').innerHTML = '<div class="list-item">Tidak ada antrian aktif</div>';
+            } else {
+                document.getElementById('activeQueue').innerHTML = activeQueue.map(q => `
+                    <div class="list-item">
+                        <div class="list-item-title">#${q.number} - ${q.custName}</div>
+                        <div class="list-item-sub">${q.service} | ${q.barber} | ${q.status}</div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        async function loadTransactions() {
+            const data = await fetchAPI('getTransactions');
+            if(data.data.length === 0) {
+                document.getElementById('transactionList').innerHTML = '<div class="list-item">Belum ada transaksi</div>';
+            } else {
+                document.getElementById('transactionList').innerHTML = data.data.slice(-20).reverse().map(t => `
+                    <div class="list-item">
+                        <div class="list-item-title">${t.custName || '-'} - Rp ${(Number(t.total)||0).toLocaleString()}</div>
+                        <div class="list-item-sub">${t.date} ${t.time} | ${t.barber} | ${t.items}</div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        async function loadQueue() {
+            const data = await fetchAPI('getQueue');
+            if(data.data.length === 0) {
+                document.getElementById('queueList').innerHTML = '<div class="list-item">Tidak ada antrian</div>';
+            } else {
+                document.getElementById('queueList').innerHTML = data.data.map(q => `
+                    <div class="list-item">
+                        <div class="list-item-title">#${q.number} - ${q.custName}</div>
+                        <div class="list-item-sub">${q.service} | ${q.barber} | ${q.status}</div>
+                        <div class="grid-2" style="margin-top: 8px;">
+                            <button class="secondary" onclick="updateQueueStatus('${q.id}', 'Proses')" style="font-size:0.7rem;padding:6px;">Proses</button>
+                            <button class="secondary" onclick="updateQueueStatus('${q.id}', 'Selesai')" style="font-size:0.7rem;padding:6px;">Selesai</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        async function updateQueueStatus(id, status) {
+            const result = await fetchAPI('updateQueue', { id, status });
+            if(result.status === 'ok') {
+                showToast('Status antrian diupdate');
+                loadQueue();
+                loadDashboard();
+            }
+        }
+        
+        async function loadCustomers() {
+            const data = await fetchAPI('getCustomers');
+            const search = document.getElementById('searchCustomer')?.value.toLowerCase() || '';
+            const filtered = data.data.filter(c => 
+                c.name?.toLowerCase().includes(search) || 
+                c.phone?.includes(search)
+            );
+            
+            if(filtered.length === 0) {
+                document.getElementById('customerList').innerHTML = '<div class="list-item">Tidak ada customer</div>';
+            } else {
+                document.getElementById('customerList').innerHTML = filtered.map(c => `
+                    <div class="list-item">
+                        <div class="list-item-title">${c.name}</div>
+                        <div class="list-item-sub">📞 ${c.phone || '-'} | ✂️ ${c.visits || 0} kunjungan | Rp ${(Number(c.spend)||0).toLocaleString()}</div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        async function loadBarbers() {
+            const data = await fetchAPI('getBarbers');
+            const barberSelect = document.getElementById('barberSelect');
+            const queueBarber = document.getElementById('queueBarber');
+            
+            if(barberSelect) {
+                barberSelect.innerHTML = '<option value="">Pilih Barber</option>' + 
+                    data.data.map(b => `<option value="${b.name}">${b.name} - ${b.spec || '-'}</option>`).join('');
+            }
+            if(queueBarber) {
+                queueBarber.innerHTML = '<option value="">Pilih Barber</option>' + 
+                    data.data.map(b => `<option value="${b.name}">${b.name} - ${b.spec || '-'}</option>`).join('');
+            }
+            
+            if(data.data.length === 0) {
+                document.getElementById('barberList').innerHTML = '<div class="list-item">Belum ada barber</div>';
+            } else {
+                document.getElementById('barberList').innerHTML = data.data.map(b => `
+                    <div class="list-item">
+                        <div class="list-item-title">✂️ ${b.name}</div>
+                        <div class="list-item-sub">${b.spec || 'General'} | ${b.status || 'Active'}</div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        async function loadStock() {
+            const data = await fetchAPI('getStock');
+            if(data.data.length === 0) {
+                document.getElementById('stockList').innerHTML = '<div class="list-item">Belum ada data stock</div>';
+            } else {
+                const grouped = {};
+                data.data.forEach(s => {
+                    if(!grouped[s.prod]) grouped[s.prod] = 0;
+                    if(s.type === 'Masuk') grouped[s.prod] += Number(s.qty);
+                    else grouped[s.prod] -= Number(s.qty);
+                });
+                document.getElementById('stockList').innerHTML = Object.entries(grouped).map(([prod, qty]) => `
+                    <div class="list-item">
+                        <div class="list-item-title">${prod}</div>
+                        <div class="list-item-sub">Stok: ${qty}</div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        // Event Listeners
+        document.getElementById('transactionForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const sub = Number(document.getElementById('sub').value);
+            const disc = Number(document.getElementById('disc').value);
+            const total = sub - (sub * disc / 100);
+            document.getElementById('total').value = total;
+            
+            const data = {
+                id: 'T' + Date.now(),
+                date: new Date().toISOString().slice(0,10),
+                time: new Date().toLocaleTimeString('id-ID'),
+                custName: document.getElementById('custName').value,
+                custPhone: document.getElementById('custPhone').value,
+                barber: document.getElementById('barberSelect').value,
+                operator: document.getElementById('operator').value,
+                items: document.getElementById('items').value,
+                sub: sub,
+                disc: disc,
+                total: total,
+                feeBarber: total * 0.3,
+                bersih: total * 0.7,
+                pay: document.getElementById('pay').value
+            };
+            
+            const result = await fetchAPI('saveTransaction', data);
+            if(result.status === 'ok') {
+                showToast('Transaksi berhasil disimpan');
+                e.target.reset();
+                loadTransactions();
+                loadDashboard();
+            } else {
+                showToast('Gagal menyimpan', true);
+            }
+        });
+        
+        document.getElementById('queueForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const queues = await fetchAPI('getQueue');
+            const number = queues.data.length + 1;
+            
+            const data = {
+                id: 'Q' + Date.now(),
+                number: number,
+                custName: document.getElementById('queueCustName').value,
+                service: document.getElementById('queueService').value,
+                barber: document.getElementById('queueBarber').value,
+                time: new Date().toLocaleTimeString('id-ID'),
+                status: 'Menunggu'
+            };
+            
+            const result = await fetchAPI('saveQueue', data);
+            if(result.status === 'ok') {
+                showToast('Ditambahkan ke antrian');
+                e.target.reset();
+                loadQueue();
+                loadDashboard();
+            } else {
+                showToast('Gagal menambah', true);
+            }
+        });
+        
+        document.getElementById('barberForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                id: 'B' + Date.now(),
+                name: document.getElementById('barberName').value,
+                spec: document.getElementById('barberSpec').value,
+                status: 'Active'
+            };
+            const result = await fetchAPI('saveBarber', data);
+            if(result.status === 'ok') {
+                showToast('Barber ditambahkan');
+                e.target.reset();
+                loadBarbers();
+            } else {
+                showToast('Gagal menambah', true);
+            }
+        });
+        
+        document.getElementById('stockForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const stocks = await fetchAPI('getStock');
+            const sisa = stocks.data.filter(s => s.prod === document.getElementById('stockProduct').value)
+                .reduce((a,b) => {
+                    if(b.type === 'Masuk') return a + Number(b.qty);
+                    return a - Number(b.qty);
+                }, 0);
+            
+            const data = {
+                date: new Date().toISOString().slice(0,10),
+                prod: document.getElementById('stockProduct').value,
+                type: document.getElementById('stockType').value,
+                qty: document.getElementById('stockQty').value,
+                sisa: sisa + (document.getElementById('stockType').value === 'Masuk' ? Number(document.getElementById('stockQty').value) : -Number(document.getElementById('stockQty').value))
+            };
+            
+            const result = await fetchAPI('saveStock', data);
+            if(result.status === 'ok') {
+                showToast('Stock diupdate');
+                e.target.reset();
+                loadStock();
+            } else {
+                showToast('Gagal update', true);
+            }
+        });
+        
+        document.getElementById('searchCustomer')?.addEventListener('input', loadCustomers);
+        
+        // Calculate total on sub/disc change
+        document.getElementById('sub')?.addEventListener('input', () => {
+            const sub = Number(document.getElementById('sub').value) || 0;
+            const disc = Number(document.getElementById('disc').value) || 0;
+            document.getElementById('total').value = sub - (sub * disc / 100);
+        });
+        document.getElementById('disc')?.addEventListener('input', () => {
+            const sub = Number(document.getElementById('sub').value) || 0;
+            const disc = Number(document.getElementById('disc').value) || 0;
+            document.getElementById('total').value = sub - (sub * disc / 100);
+        });
+        
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const tabId = btn.dataset.tab;
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+                document.getElementById(tabId).classList.remove('hidden');
+                
+                // Load data based on tab
+                if(tabId === 'dashboard') loadDashboard();
+                if(tabId === 'transactions') loadTransactions();
+                if(tabId === 'queue') loadQueue();
+                if(tabId === 'customers') loadCustomers();
+                if(tabId === 'barbers') loadBarbers();
+                if(tabId === 'stock') loadStock();
+            });
+        });
+        
+        // Initial load
+        async function init() {
+            document.getElementById('status').innerText = 'Connected';
+            loadDashboard();
+            loadBarbers();
+        }
+        
+        init();
+        
+        window.updateQueueStatus = updateQueueStatus;
+    </script>
+</body>
+</html>
